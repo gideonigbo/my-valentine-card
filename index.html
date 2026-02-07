@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Valentine Card Creator</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        :root {
+            --primary-pink: #ff4d6d;
+            --soft-pink: #fff0f3;
+            --dark-pink: #c9184a;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--soft-pink);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .controls {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            max-width: 400px;
+            width: 100%;
+        }
+
+        input, button {
+            width: 100%;
+            margin: 10px 0;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: var(--primary-pink);
+            color: white;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background-color: var(--dark-pink);
+        }
+
+        /* THE CARD DESIGN */
+        #card-portal {
+            width: 350px;
+            background: white;
+            padding: 20px;
+            border-radius: 20px;
+            text-align: center;
+            border: 8px solid var(--primary-pink);
+            display: none; /* Hidden until generated */
+        }
+
+        .image-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .image-grid img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+
+        .message-area {
+            font-family: 'Georgia', serif;
+            color: var(--dark-pink);
+            font-style: italic;
+            font-size: 1.2rem;
+        }
+
+        #download-link {
+            display: none;
+            margin-top: 10px;
+            color: var(--dark-pink);
+            text-decoration: none;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="controls">
+        <h2 style="color: var(--dark-pink); text-align:center;">Valentine Card Maker</h2>
+        <input type="text" id="sweetName" placeholder="Enter Sweet Name...">
+        <input type="file" id="imageInput" multiple accept="image/*">
+        <button onclick="previewCard()">1. Preview Card</button>
+        <button onclick="saveAndPrepShare()" style="background-color: #25D366;">2. Save & Share to WhatsApp</button>
+        <a id="download-link">Download Card Individually</a>
+    </div>
+
+    <div id="card-portal">
+        <div class="image-grid" id="preview-grid"></div>
+        <div class="message-area">
+            <p id="final-message"></p>
+            <p style="font-size: 0.8rem; margin-top: 10px;">❤️ Forever Yours ❤️</p>
+        </div>
+    </div>
+
+    <script>
+        const sweetWords = "You make every moment feel like a dream come true. My heart belongs to you, ";
+
+        function previewCard() {
+            const name = document.getElementById('sweetName').value;
+            const files = document.getElementById('imageInput').files;
+            const grid = document.getElementById('preview-grid');
+            const card = document.getElementById('card-portal');
+            
+            if (!name || files.length < 1) {
+                alert("Please add a name and at least one image!");
+                return;
+            }
+
+            // Clear previous images
+            grid.innerHTML = '';
+            card.style.display = 'block';
+
+            // Load Images
+            for (let i = 0; i < Math.min(files.length, 4); i++) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    grid.appendChild(img);
+                }
+                reader.readAsDataURL(files[i]);
+            }
+
+            document.getElementById('final-message').innerText = sweetWords + name + "!";
+        }
+
+        function saveAndPrepShare() {
+            const card = document.getElementById('card-portal');
+            const name = document.getElementById('sweetName').value;
+
+            html2canvas(card).then(canvas => {
+                // Convert canvas to data URL (Image)
+                const imageData = canvas.toDataURL("image/png");
+                
+                // Create Download Link
+                const link = document.getElementById('download-link');
+                link.href = imageData;
+                link.download = `Valentine_For_${name}.png`;
+                link.style.display = 'block';
+                link.innerText = "Click here to save the image to your phone/PC";
+
+                // WhatsApp Share Link
+                // Note: You cannot attach an image file directly via a simple URL link. 
+                // The best UX is to trigger the download, then open WhatsApp for the user to paste/attach it.
+                const waText = encodeURIComponent(`Happy Valentine's Day ${name}! I made this card for you. Check your downloads!`);
+                const waUrl = `https://wa.me/?text=${waText}`;
+                
+                alert("Card generated! Download the image first, then I will open WhatsApp for you to send it.");
+                window.open(waUrl, '_blank');
+            });
+        }
+    </script>
+</body>
+</html>
