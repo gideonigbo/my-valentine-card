@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Valentine Card Creator</title>
+    <link src="style.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         :root {
@@ -127,22 +128,26 @@
                 return;
             }
 
-            // Clear previous images
             grid.innerHTML = '';
             card.style.display = 'block';
 
-            // Load Images
+            const randomMessage = sweetMessages[Math.floor(Math.random() * sweetMessages.length)];
+
             for (let i = 0; i < Math.min(files.length, 4); i++) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     const img = document.createElement('img');
                     img.src = e.target.result;
+                    // Adding a slight tilt to every other image for a "scrapbook" feel
+                    if (i % 2 === 0) img.style.transform = "rotate(-5deg)";
+                    else img.style.transform = "rotate(5deg)";
+                    
                     grid.appendChild(img);
                 }
                 reader.readAsDataURL(files[i]);
             }
 
-            document.getElementById('final-message').innerText = sweetWords + name + "!";
+            document.getElementById('final-message').innerText = randomMessage + name + "!";
         }
 
         function saveAndPrepShare() {
