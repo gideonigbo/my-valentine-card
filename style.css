@@ -1,0 +1,33 @@
+.image-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            padding: 20px;
+            justify-items: center; /* Centers the circles */
+        }
+
+        .image-grid img {
+            width: 130px;
+            height: 130px;
+            /* This creates the neat circular crop */
+            object-fit: cover;
+            border-radius: 50%; 
+            /* Subtle shadow to make them "pop" against the card */
+            box-shadow: 0 8px 15px rgba(255, 77, 109, 0.2);
+            border: 3px solid white;
+            transition: transform 0.3s ease;
+        }
+
+        /* Makes the card itself feel more premium */
+        #card-portal {
+            width: 380px;
+            background: #ffffff;
+            background-image: radial-gradient(#ffb3c1 0.5px, transparent 0.5px);
+            background-size: 20px 20px; /* Subtle polka dot pattern */
+            padding: 30px;
+            border-radius: 30px;
+            text-align: center;
+            border: none;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            display: none;
+        }
